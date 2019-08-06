@@ -94,5 +94,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	
+	<modules>
+		<module>e001-helloworld</module>
+		<module>e002-helloworld-ini</module>
+		<module>e003-items</module>
+		<module>e004-lazy</module>
+	</modules>
 
 </project>
