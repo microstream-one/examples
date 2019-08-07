@@ -3,20 +3,18 @@ package one.microstream.sampler.lazy;
 
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
+import java.time.Year;
+import java.util.Map;
 import java.util.Random;
-
-import com.github.javafaker.Commerce;
-import com.github.javafaker.Company;
-import com.github.javafaker.Faker;
+import java.util.stream.Collectors;
 
 import one.microstream.storage.types.EmbeddedStorage;
 import one.microstream.storage.types.EmbeddedStorageManager;
 
 
 /**
- * Lazy loading example. Lazy part is in {@link Order}.
+ * Lazy loading example. Lazy part is in {@link BusinessYear}.
  *
  *
  */
@@ -30,61 +28,80 @@ public class Main
 			storageManager.setRoot(createSampleData());
 			storageManager.storeRoot();
 		}
+		
+		calcRevenue(storageManager);
+		
+		System.out.println();
+		System.out.println("No going full in memory!");
 
-		calcSumOfAllOrders(storageManager);
-		calcSumOfAllOrders(storageManager);
-
+		calcRevenue(storageManager);
+		
 		storageManager.shutdown();
 	}
-
-	private static void calcSumOfAllOrders(final EmbeddedStorageManager storageManager)
+	
+	private static void calcRevenue(final EmbeddedStorageManager storageManager)
 	{
-		final DataRoot root           = (DataRoot)storageManager.root();
+		final MyBusinessApp        root           = (MyBusinessApp)storageManager.root();
 
-		final long     now            = System.currentTimeMillis();
+		final int                  startYear      = Year.now().getValue() - 3;
+		final long                 now            = System.currentTimeMillis();
 
-		final double   sumOfAllOrders = root.orders().stream()
-			.mapToDouble(order -> order.getItems().parallelStream()
-				.mapToDouble(item -> item.getPrice() * item.getAmount()).sum())
+		final Map<Integer, Double> yearToRevenue  = root.getBusinessYears().entrySet().stream()
+			.filter(e -> e.getKey() >= startYear)
+			.collect(Collectors.toMap(
+				e -> e.getKey(),
+				e -> e.getValue().turnovers()
+					.mapToDouble(Turnover::getAmount)
+					.sum()));
+
+		final double               overallRevenue = yearToRevenue.values().stream()
+			.mapToDouble(Double::doubleValue)
 			.sum();
 
-		System.out.println();
-		System.out.println(
-			"Sum of all orders: " + NumberFormat.getCurrencyInstance().format(sumOfAllOrders));
-		System.out.println("Took " + (System.currentTimeMillis() - now) + " ms");
-	}
+		final NumberFormat         numberFormat   = NumberFormat.getCurrencyInstance();
 
-	private static DataRoot createSampleData()
+		System.out.println();
+
+		System.out.println(
+			"Overall Revenue since " + startYear + ": " +
+				numberFormat.format(overallRevenue));
+
+		yearToRevenue.entrySet().stream()
+			.sorted((e1, e2) -> Integer.compare(e1.getKey(), e2.getKey()))
+			.forEach(e -> System.out.println(
+				"Revenue in " +
+					e.getKey() +
+					": " +
+					numberFormat.format(e.getValue())));
+
+		final long recordCount = root.getBusinessYears().entrySet().stream()
+			.filter(e -> e.getKey() >= startYear)
+			.mapToLong(e -> 2 + 2 * e.getValue().turnovers().count())
+			.sum();
+
+		System.out.println(
+			"Took " + (System.currentTimeMillis() - now) +
+				" ms for " + NumberFormat.getIntegerInstance().format(recordCount) + " records");
+	}
+	
+	private static MyBusinessApp createSampleData()
 	{
 		System.out.println("Creating sample data...");
-
-		final Random      random       = new Random();
-		final Faker       faker        = new Faker();
-		final Commerce    fakeCommerce = faker.commerce();
-		final Company     fakeCompany  = faker.company();
-
-		final List<Order> orders       = new ArrayList<>();
-
-		int               itemCount    = 0;
-
-		for(int o = 0; o < 1000; o++)
+		
+		final MyBusinessApp app    = new MyBusinessApp();
+		
+		final Random        random = new Random();
+		
+		for(int year = 2000, thisYear = Year.now().getValue(); year <= thisYear; year++)
 		{
-			final List<Item> items = new ArrayList<>();
-			final int        c     = random.nextInt(500) + 1;
-			itemCount += c;
-			for(int i = 0; i < c; i++)
+			final BusinessYear businessYear = new BusinessYear();
+			for(int i = 0, c = (int)(random.nextDouble() * 100000); i < c; i++)
 			{
-				items.add(new Item(fakeCommerce.productName(), random.nextInt(10), random.nextDouble()));
+				businessYear.addTurnover(new Turnover(random.nextDouble() * 100_000, Instant.now()));
 			}
-
-			orders.add(new Order(fakeCompany.name(), items));
+			app.getBusinessYears().put(year, businessYear);
 		}
-
-		final NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-		System.out.println(
-			"Created " + numberFormat.format(orders.size()) + " orders with " +
-				numberFormat.format(itemCount) + " items.");
-
-		return new DataRoot(orders);
+		
+		return app;
 	}
 }

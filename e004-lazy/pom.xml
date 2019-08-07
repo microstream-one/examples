@@ -20,10 +20,6 @@
 			<groupId>one.microstream</groupId>
 			<artifactId>persistence.binary.jdk8</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.github.javafaker</groupId>
-			<artifactId>javafaker</artifactId>
-		</dependency>
 	</dependencies>
 
 </project>
