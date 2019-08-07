@@ -100,6 +100,7 @@
 		<module>e003-items</module>
 		<module>e004-lazy</module>
    		<module>e005-storing</module>
-    </modules>
+   		<module>e006-eagerLoading</module>
+	</modules>
 
 </project>
