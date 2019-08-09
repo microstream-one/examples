@@ -1,4 +1,4 @@
-package one.microstream.sampler.cutomtypehandler;
+package one.microstream.sampler.customtypehandler;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
