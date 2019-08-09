@@ -71,8 +71,7 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		bytes.read_bytes(bytes.loadItemEntityContentAddress() + OFFSET_BYTES, blob);
 		
 		BufferedImage image = null;
-		
-		
+			
 		try(ByteArrayInputStream bis = new ByteArrayInputStream(blob))
 		{		
 			image = ImageIO.read(bis);
@@ -81,7 +80,6 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		{
 			throw new RuntimeException(e); 
 		} 
-
 
 		return image;
 	}	
