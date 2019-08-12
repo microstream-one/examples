@@ -101,6 +101,7 @@
 		<module>e004-lazy</module>
    		<module>e005-storing</module>
    		<module>e006-eagerLoading</module>
+   		<module>e007-customTypeHandler</module>
 	</modules>
 
 </project>
