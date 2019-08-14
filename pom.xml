@@ -102,6 +102,7 @@
    		<module>e005-storing</module>
    		<module>e006-eagerLoading</module>
    		<module>e007-customTypeHandler</module>
-	</modules>
+    	<module>e008-customLegacyTypeHandler</module>
+  </modules>
 
 </project>
