@@ -13,7 +13,7 @@ import one.microstream.X;
 import one.microstream.memory.XMemory;
 import one.microstream.persistence.binary.internal.AbstractBinaryHandlerCustomValue;
 import one.microstream.persistence.binary.types.Binary;
-import one.microstream.persistence.types.PersistenceLoadHandler;
+import one.microstream.persistence.types.PersistenceObjectIdResolver;
 import one.microstream.persistence.types.PersistenceStoreHandler;
 
 public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue<BufferedImage>
@@ -61,9 +61,9 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		
 		XMemory.copyArrayToAddress(bos.toByteArray(), contentAddress + OFFSET_BYTES);
 	}
-
+	
 	@Override
-	public BufferedImage create(Binary bytes, PersistenceLoadHandler handler)
+	public BufferedImage create(Binary bytes, PersistenceObjectIdResolver handler)
 	{
 		long capcity = X.checkArrayRange(bytes.get_long(OFFSET_CAPACITY));		
 		byte[] blob = new byte[(int)capcity]; 

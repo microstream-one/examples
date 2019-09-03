@@ -3,8 +3,8 @@ package one.microstream.sampler.customlegacytypehandler;
 import one.microstream.X;
 import one.microstream.persistence.binary.types.Binary;
 import one.microstream.persistence.binary.types.BinaryLegacyTypeHandler;
-import one.microstream.persistence.types.PersistenceLoadHandler;
 import one.microstream.persistence.types.PersistenceObjectIdAcceptor;
+import one.microstream.persistence.types.PersistenceObjectIdResolver;
 
 public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.AbstractCustom<NicePlace> 
 {
@@ -48,16 +48,16 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 			
 		return false;
 	}
-		
+			
 	@Override
-	public NicePlace create(Binary bytes, PersistenceLoadHandler handler) 
+	public NicePlace create(Binary bytes, PersistenceObjectIdResolver handler) 
 	{
 		//required instances may not be available, yet, at creation time. Thus create dummy and fill in #update.
 		return new NicePlace();
 	}
 	
 	@Override
-	public void update(Binary bytes, NicePlace instance, PersistenceLoadHandler handler) 
+	public void update(Binary bytes, NicePlace instance, PersistenceObjectIdResolver handler) 
 	{
 		//get the data of the legacy NicePlace fields
 		final String name = (String)handler.lookupObject(bytes.get_long(BINARY_OFFSET_name));
