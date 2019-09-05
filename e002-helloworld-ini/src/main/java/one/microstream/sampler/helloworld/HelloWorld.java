@@ -2,6 +2,7 @@
 package one.microstream.sampler.helloworld;
 
 import java.io.IOException;
+import java.util.Date;
 
 import one.microstream.storage.configuration.Configuration;
 import one.microstream.storage.types.EmbeddedStorageManager;
@@ -23,10 +24,13 @@ public class HelloWorld
 			.createEmbeddedStorageManager(root)
 			.start();
 				
-		// Set content data to the root element, including a timestamp to visualize changes on the next execution.
-		root.setContent("Hello World! @" + System.currentTimeMillis());
+		// print the root to show its loaded content (stored in the last execution).
+		System.out.println(root);
 
-		// Store the modified root
+		// Set content data to the root element, including the time to visualize changes on the next execution.
+		root.setContent("Hello World! @ " + new Date());
+
+		// Store the modified root and its content.
 		storageManager.storeRoot();
 
 		// Shutdown is optional as the storage concept is inherently crash-safe
