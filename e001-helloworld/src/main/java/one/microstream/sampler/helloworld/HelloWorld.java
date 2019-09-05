@@ -11,21 +11,20 @@ public class HelloWorld
 {
 	public static void main(final String[] args)
 	{
-		// Root instance
-		final DataRoot               root           = new DataRoot();
+		// Application-specific root instance
+		final DataRoot root = new DataRoot();
 
-		// Init storage manager
+		// Initialize a storage manager ("the database") with the given directory and defaults for everything else.
 		final EmbeddedStorageManager storageManager = EmbeddedStorage.start(root, new File("data"));
 
-		System.out.println(root);
-
-		//set content data to the root element
+		// Set content data to the root element, including a timestamp to visualize changes on the next execution.
 		root.setContent("Hello World! @" + System.currentTimeMillis());
 
-		// Store modified root
+		// Store the modified root
 		storageManager.storeRoot();
 
-		// Save shutdown
-		storageManager.shutdown();
+		// Shutdown is optional as the storage concept is inherently crash-safe
+//		storageManager.shutdown();
+		System.exit(0);
 	}
 }

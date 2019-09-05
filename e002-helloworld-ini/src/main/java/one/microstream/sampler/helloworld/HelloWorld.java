@@ -11,25 +11,26 @@ public class HelloWorld
 {
 	public static void main(final String[] args) throws IOException
 	{
-		final Configuration          configuration  = Configuration.LoadIni(
+		// Application-specific root instance
+		final DataRoot root = new DataRoot();
+		
+		// configuring the database via .ini file instead of API. Here the directory and the thread count.
+		final Configuration configuration = Configuration.LoadIni(
 			HelloWorld.class.getResource("/META-INF/microstream/storage.ini"));
-		
-		final DataRoot               root           = new DataRoot();
-		
+				
 		final EmbeddedStorageManager storageManager = configuration
 			.createEmbeddedStorageFoundation()
 			.createEmbeddedStorageManager(root)
 			.start();
-		
-		System.out.println(root);
-		
-		//set content data to the root element
-		root.setContent("Hello there! @" + System.currentTimeMillis());
-		
-		// Store modified object
-		storageManager.store(root);
-		
-		// Save shutdown
-		storageManager.shutdown();
+				
+		// Set content data to the root element, including a timestamp to visualize changes on the next execution.
+		root.setContent("Hello World! @" + System.currentTimeMillis());
+
+		// Store the modified root
+		storageManager.storeRoot();
+
+		// Shutdown is optional as the storage concept is inherently crash-safe
+//		storageManager.shutdown();
+		System.exit(0);
 	}
 }
