@@ -3,26 +3,26 @@ package one.microstream.sampler.helloworld;
 
 public class DataRoot
 {
-	private String name;
+	private String content;
 
 	public DataRoot()
 	{
 		super();
 	}
 
-	public String getName()
+	public String getContent()
 	{
-		return this.name;
+		return this.content;
 	}
 
-	public void setName(final String name)
+	public void setContent(final String content)
 	{
-		this.name = name;
+		this.content = content;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "Root: " + this.name;
+		return "Root: " + this.content;
 	}
 }

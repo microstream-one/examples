@@ -19,7 +19,8 @@ public class HelloWorld
 
 		System.out.println(root);
 
-		root.setName("Hello there! [" + System.currentTimeMillis() + "]");
+		//set content data to the root element
+		root.setContent("Hello World! @" + System.currentTimeMillis());
 
 		// Store modified root
 		storageManager.storeRoot();
