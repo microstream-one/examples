@@ -95,14 +95,15 @@
 	</dependencyManagement>
 	
 	<modules>
-		<module>e001-helloworld</module>
-		<module>e002-helloworld-ini</module>
-		<module>e003-items</module>
-		<module>e004-lazy</module>
-   		<module>e005-storing</module>
-   		<module>e006-eagerLoading</module>
-   		<module>e007-customTypeHandler</module>
-    	<module>e008-customLegacyTypeHandler</module>
-  </modules>
+		<module>helloworld</module>
+		<module>helloworld-ini</module>
+		<module>items</module>
+		<module>lazyLoading</module>
+   		<module>storing</module>
+   		<module>loading</module>
+   		<module>deleting</module>
+   		<module>customTypeHandler</module>
+		<module>customLegacyTypeHandler</module>		
+	</modules>
 
 </project>
