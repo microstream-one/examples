@@ -1,42 +1,42 @@
+
 package one.microstream.sampler.deleting;
 
-public class MyData 
+public class MyData
 {
 	private String name;
 	private int    intValue;
 	
-	public MyData(String name, int value)
+	public MyData(final String name, final int value)
 	{
 		super();
-		this.name = name;
+		this.name     = name;
 		this.intValue = value;
 	}
-
-	public String getName() 
+	
+	public String getName()
 	{
-		return name;
+		return this.name;
 	}
-
-	public void setName(String name) 
+	
+	public void setName(final String name)
 	{
 		this.name = name;
 	}
-		
-	public int getIntegerValue() 
+	
+	public int getIntegerValue()
 	{
-		return intValue;
+		return this.intValue;
 	}
-
-	public void setIntValue(int integerValue) 
+	
+	public void setIntValue(final int integerValue)
 	{
 		this.intValue = integerValue;
 	}
-
+	
+	@Override
 	public String toString()
 	{
-		return name + " value: " + intValue;
+		return this.name + " value: " + this.intValue;
 	}
-	
-	
 	
 }
