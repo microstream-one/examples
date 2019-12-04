@@ -60,9 +60,9 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	public void update(Binary bytes, NicePlace instance, PersistenceObjectIdResolver handler) 
 	{
 		//get the data of the legacy NicePlace fields
-		final String name = (String)handler.lookupObject(bytes.get_long(BINARY_OFFSET_name));
-		final String directions  = (String)handler.lookupObject(bytes.get_long(BINARY_OFFSET_directions));  
-		
+		final String name = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_name));
+		final String directions  = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_directions));  
+			
 		//initialize the new version of our NicePlace
 		instance.name = name;
 		instance.location = new Location(directions, 0, 0);
@@ -71,7 +71,7 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	@Override
 	public final void iterateLoadableReferences(final Binary offset, final PersistenceObjectIdAcceptor iterator) 
 	{
-		iterator.acceptObjectId(offset.get_long(BINARY_OFFSET_name));
-		iterator.acceptObjectId(offset.get_long(BINARY_OFFSET_directions));
+		iterator.acceptObjectId(offset.read_long(BINARY_OFFSET_name));
+		iterator.acceptObjectId(offset.read_long(BINARY_OFFSET_directions));
 	}
 }

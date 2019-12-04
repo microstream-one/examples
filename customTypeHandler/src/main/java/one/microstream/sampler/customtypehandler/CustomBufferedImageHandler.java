@@ -9,8 +9,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
-import one.microstream.X;
-import one.microstream.memory.XMemory;
 import one.microstream.persistence.binary.internal.AbstractBinaryHandlerCustomValue;
 import one.microstream.persistence.binary.types.Binary;
 import one.microstream.persistence.types.PersistenceObjectIdResolver;
@@ -52,23 +50,15 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		{		
 			throw new RuntimeException(e);
 		}
+				
+		bytes.store_bytes(this.typeId(), objectId, bos.toByteArray());
 		
-		final long numBytes = (long)bos.toByteArray().length;
-		final long contentLength = LENGTH_CAPACITY + numBytes;
-		
-		final long contentAddress = bytes.storeEntityHeader(contentLength, this.typeId(), objectId);
-		bytes.store_long(contentAddress + OFFSET_CAPACITY, numBytes);
-		
-		XMemory.copyArrayToAddress(bos.toByteArray(), contentAddress + OFFSET_BYTES);
 	}
 	
 	@Override
 	public BufferedImage create(Binary bytes, PersistenceObjectIdResolver handler)
-	{
-		long capcity = X.checkArrayRange(bytes.get_long(OFFSET_CAPACITY));		
-		byte[] blob = new byte[(int)capcity]; 
-				
-		bytes.read_bytes(bytes.loadItemEntityContentAddress() + OFFSET_BYTES, blob);
+	{			
+		byte[] blob = bytes.build_bytes();
 		
 		BufferedImage image = null;
 			
