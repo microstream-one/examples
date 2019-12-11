@@ -15,45 +15,45 @@ import one.microstream.storage.types.EmbeddedStorageManager;
  * USAGE:
  * 
  * Run this sample twice. For the first run use the upper first generation "NicePlace" Object to setup the initial storage.
- * Before the second run switch to the modified, second generation version of the "NicePlace" object by  
+ * Before the second run switch to the modified, second generation version of the "NicePlace" object by
  * commenting out the initial version and using the modified one in NicePlace.java.
  *
  * the custom type mapping is done by the LegacyTypeHandlerNicePlace.
  *
  */
-public class Main 
+public class Main
 {
 	static final File workingdir = GetTempWorkDirectory("e008-LegacyTypeMappingExample");
 	static final String storageChannelFileName = "channel_0\\channel_0_1.dat";
 	
-	public static void main(String[] args) 
-	{				
+	public static void main(final String[] args)
+	{
 		final EmbeddedStorageManager storage;
 				
 		//if no channel storage files are found a new storage is created
 		if(!Files.exists(Paths.get(workingdir.getPath(), storageChannelFileName)))
-		{						
-			storage = EmbeddedStorage.Foundation(workingdir).start();							
-			NicePlace myPlace = new NicePlace("Campground", "not far away");
+		{
+			storage = EmbeddedStorage.Foundation(workingdir.toPath()).start();
+			final NicePlace myPlace = new NicePlace("Campground", "not far away");
 			storage.setRoot(myPlace);
-			storage.storeRoot();		
+			storage.storeRoot();
 						
 			System.out.println("created storage with legacy object:");
 			System.out.println(ObjectToString(myPlace));
 			System.out.println(myPlace + "\n");
-		}		
+		}
 		else
 		{
 			//a channel storage file is found, try to load the storage and use
 			//the custom legacy type handler "NicePlaceLegacyHandler"
 			
-			storage = EmbeddedStorage.Foundation(workingdir)
-					.onConnectionFoundation(f -> 
+			storage = EmbeddedStorage.Foundation(workingdir.toPath())
+					.onConnectionFoundation(f ->
 						f.getCustomTypeHandlerRegistry()
 							.registerLegacyTypeHandler(new LegacyTypeHandlerNicePlace()))
 					.start();
 			
-			NicePlace myPlace = (NicePlace)storage.root();
+			final NicePlace myPlace = (NicePlace)storage.root();
 	
 			System.out.println("loaded legacy storage:");
 			System.out.println(ObjectToString(myPlace));
@@ -69,16 +69,16 @@ public class Main
 	 * @param Object o
 	 * @return String
 	 */
-	public static String ObjectToString(Object o)
+	public static String ObjectToString(final Object o)
 	{
-		StringBuilder str = new StringBuilder();
+		final StringBuilder str = new StringBuilder();
 		
-		Class<?> T = o.getClass();
+		final Class<?> T = o.getClass();
 		
 		str.append(T.getName() + "\n");
 		
-		for (Field field : T.getDeclaredFields()) 
-		{			
+		for (final Field field : T.getDeclaredFields())
+		{
 			str.append(field + "\n");
 		}
 		
@@ -86,16 +86,22 @@ public class Main
 	}
 	
 	/**
-	 * create a working directory with constant name in system's temporary directory 
-	 */	
-	public static File GetTempWorkDirectory(String name)
+	 * create a working directory with constant name in system's temporary directory
+	 */
+	public static File GetTempWorkDirectory(final String name)
 	{
-		File tmpPath = new File(System.getProperty("java.io.tmpdir"));
+		final File tmpPath = new File(System.getProperty("java.io.tmpdir"));
 		if(tmpPath.canWrite() && tmpPath.isDirectory())
 		{
-			File p = Paths.get(tmpPath.toString(), name).toFile();			
-			if(p.exists()) return p;			
-			if(p.mkdir())  return p;			
+			final File p = Paths.get(tmpPath.toString(), name).toFile();
+			if(p.exists())
+			{
+				return p;
+			}
+			if(p.mkdir())
+			{
+				return p;
+			}
 		}
 				
 		throw new RuntimeException("Faild to get or create working directory!");

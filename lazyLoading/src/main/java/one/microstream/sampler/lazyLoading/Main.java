@@ -1,7 +1,7 @@
 
 package one.microstream.sampler.lazyLoading;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.time.Instant;
 import java.time.Year;
@@ -22,7 +22,7 @@ public class Main
 {
 	public static void main(final String[] args)
 	{
-		final EmbeddedStorageManager storageManager = EmbeddedStorage.start(new File("data"));
+		final EmbeddedStorageManager storageManager = EmbeddedStorage.start(Paths.get("data"));
 		if(storageManager.root() == null)
 		{
 			storageManager.setRoot(createSampleData());

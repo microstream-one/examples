@@ -2,7 +2,7 @@
 package one.microstream.sampler.items;
 
 import java.io.Console;
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -22,13 +22,13 @@ public class Main
 
 	public Main()
 	{
-		this.storageManager = EmbeddedStorage.start(new DataRoot(), new File("data"));
+		this.storageManager = EmbeddedStorage.start(new DataRoot(), Paths.get("data"));
 	}
 
 	private void start()
 	{
-		usage();
-		command();
+		this.usage();
+		this.command();
 	}
 
 	private DataRoot root()
@@ -65,7 +65,7 @@ public class Main
 			final String title = command.substring(2).trim();
 			if(title.isEmpty())
 			{
-				usage();
+				this.usage();
 			}
 			else
 			{
@@ -74,7 +74,7 @@ public class Main
 				this.storageManager.store(items);
 				System.out.println("Item added");
 			}
-			command();
+			this.command();
 		}
 		else if(command.startsWith("r "))
 		{
@@ -95,30 +95,30 @@ public class Main
 			}
 			catch(final NumberFormatException e)
 			{
-				usage();
+				this.usage();
 			}
-			command();
+			this.command();
 		}
 		else if(command.startsWith("s "))
 		{
 			final String term = command.substring(2).trim().toLowerCase();
 			if(term.isEmpty())
 			{
-				usage();
+				this.usage();
 			}
 			else
 			{
 				final List<Item> items = this.root().items().stream()
 					.filter(item -> item.getTitle().toLowerCase().startsWith(term))
 					.collect(Collectors.toList());
-				print(items);
+				this.print(items);
 			}
-			command();
+			this.command();
 		}
 		else if(command.equals("l"))
 		{
-			print(this.root().items());
-			command();
+			this.print(this.root().items());
+			this.command();
 		}
 		else if(command.equals("q"))
 		{
@@ -126,8 +126,8 @@ public class Main
 		}
 		else
 		{
-			usage();
-			command();
+			this.usage();
+			this.command();
 		}
 	}
 
