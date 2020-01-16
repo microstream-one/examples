@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import one.microstream.persistence.types.SelfStoring;
 import one.microstream.persistence.types.Storer;
 
 
-public class FileAssets implements SelfStoring, Iterable<FileAsset>
+public class FileAssets implements Iterable<FileAsset>
 {
 	private final File                   root;
 	private final Map<String, FileAsset> registry;
@@ -55,8 +54,7 @@ public class FileAssets implements SelfStoring, Iterable<FileAsset>
 		return this.registry.values().iterator();
 	}
 	
-	@Override
-	public <S extends Storer> S storeBy(final S storer)
+	public <S extends Storer> S store(final S storer)
 	{
 		storer.store(this.registry);
 		storer.store(this);

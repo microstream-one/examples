@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import one.microstream.persistence.lazy.Lazy;
+import one.microstream.reference.Lazy;
 
 
 public class BusinessYear
@@ -24,7 +24,7 @@ public class BusinessYear
 
 	public void addTurnover(final Turnover turnover)
 	{
-		List<Turnover> turnovers = getTurnovers();
+		List<Turnover> turnovers = this.getTurnovers();
 		if(turnovers == null)
 		{
 			this.turnovers = Lazy.Reference(turnovers = new ArrayList<>());
@@ -34,7 +34,7 @@ public class BusinessYear
 
 	public Stream<Turnover> turnovers()
 	{
-		final List<Turnover> turnovers = getTurnovers();
+		final List<Turnover> turnovers = this.getTurnovers();
 		return turnovers != null ? turnovers.stream() : Stream.empty();
 	}
 }
