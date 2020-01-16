@@ -1,7 +1,7 @@
 
 package one.microstream.sampler.helloworld;
 
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.Date;
 
 import one.microstream.storage.types.EmbeddedStorage;
@@ -16,7 +16,7 @@ public class HelloWorld
 		final DataRoot root = new DataRoot();
 
 		// Initialize a storage manager ("the database") with the given directory and defaults for everything else.
-		final EmbeddedStorageManager storageManager = EmbeddedStorage.start(root, Paths.get("data"));
+		final EmbeddedStorageManager storageManager = EmbeddedStorage.start(root, new File("data"));
 		
 		// print the root to show its loaded content (stored in the last execution).
 		System.out.println(root);

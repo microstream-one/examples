@@ -23,7 +23,7 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		OFFSET_CAPACITY = 0                                ,
 		OFFSET_BYTES    = OFFSET_CAPACITY + LENGTH_CAPACITY;
 	
-	public CustomBufferedImageHandler()			 
+	public CustomBufferedImageHandler()
 	{
 		super(BufferedImage.class,
 				CustomFields(
@@ -33,45 +33,45 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 	}
 
 	@Override
-	public boolean hasVaryingPersistedLengthInstances() 
+	public boolean hasVaryingPersistedLengthInstances()
 	{
 		return false;
 	}
 
 	@Override
-	public void store(Binary bytes, BufferedImage instance, long objectId, PersistenceStoreHandler handler) 
+	public void store(final Binary bytes, final BufferedImage instance, final long objectId, final PersistenceStoreHandler handler)
 	{
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try ( ImageOutputStream ios = new MemoryCacheImageOutputStream(bos))
 		{
-			ImageIO.write(instance, "png", ios);						
-		} 
-		catch (IOException e) 
-		{		
+			ImageIO.write(instance, "png", ios);
+		}
+		catch (final IOException e)
+		{
 			throw new RuntimeException(e);
 		}
 				
-		bytes.store_bytes(this.typeId(), objectId, bos.toByteArray());
+		bytes.storeArray_byte(this.typeId(), objectId, bos.toByteArray());
 		
 	}
 	
 	@Override
-	public BufferedImage create(Binary bytes, PersistenceObjectIdResolver handler)
-	{			
-		byte[] blob = bytes.build_bytes();
+	public BufferedImage create(final Binary bytes, final PersistenceObjectIdResolver handler)
+	{
+		final byte[] blob = bytes.buildArray_byte();
 		
 		BufferedImage image = null;
 			
 		try(ByteArrayInputStream bis = new ByteArrayInputStream(blob))
-		{		
-			image = ImageIO.read(bis);
-		} 
-		catch (IOException e) 
 		{
-			throw new RuntimeException(e); 
-		} 
+			image = ImageIO.read(bis);
+		}
+		catch (final IOException e)
+		{
+			throw new RuntimeException(e);
+		}
 
 		return image;
-	}	
+	}
 
 }

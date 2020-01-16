@@ -33,7 +33,7 @@ public class Main
 		//if no channel storage files are found a new storage is created
 		if(!Files.exists(Paths.get(workingdir.getPath(), storageChannelFileName)))
 		{
-			storage = EmbeddedStorage.Foundation(workingdir.toPath()).start();
+			storage = EmbeddedStorage.Foundation(workingdir).start();
 			final NicePlace myPlace = new NicePlace("Campground", "not far away");
 			storage.setRoot(myPlace);
 			storage.storeRoot();
@@ -47,7 +47,7 @@ public class Main
 			//a channel storage file is found, try to load the storage and use
 			//the custom legacy type handler "NicePlaceLegacyHandler"
 			
-			storage = EmbeddedStorage.Foundation(workingdir.toPath())
+			storage = EmbeddedStorage.Foundation(workingdir)
 					.onConnectionFoundation(f ->
 						f.getCustomTypeHandlerRegistry()
 							.registerLegacyTypeHandler(new LegacyTypeHandlerNicePlace()))

@@ -2,7 +2,7 @@
 package one.microstream.sampler.items;
 
 import java.io.Console;
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class Main
 
 	public Main()
 	{
-		this.storageManager = EmbeddedStorage.start(new DataRoot(), Paths.get("data"));
+		this.storageManager = EmbeddedStorage.start(new DataRoot(), new File("data"));
 	}
 
 	private void start()
