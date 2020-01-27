@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import one.microstream.persistence.lazy.Lazy;
+import one.microstream.reference.Lazy;
 
 
 public class BusinessYear

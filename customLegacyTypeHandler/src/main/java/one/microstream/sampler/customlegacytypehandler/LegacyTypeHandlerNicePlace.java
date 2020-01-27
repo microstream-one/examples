@@ -3,8 +3,8 @@ package one.microstream.sampler.customlegacytypehandler;
 import one.microstream.X;
 import one.microstream.persistence.binary.types.Binary;
 import one.microstream.persistence.binary.types.BinaryLegacyTypeHandler;
-import one.microstream.persistence.types.PersistenceObjectIdAcceptor;
-import one.microstream.persistence.types.PersistenceObjectIdResolver;
+import one.microstream.persistence.types.PersistenceLoadHandler;
+import one.microstream.persistence.types.PersistenceReferenceLoader;
 
 public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.AbstractCustom<NicePlace>
 {
@@ -20,13 +20,6 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 		super(NicePlace.class,
 				X.List(CustomField(String.class,"name"),
 						CustomField(String.class,"directions")));
-	}
-	
-	@Override
-	public boolean hasInstanceReferences()
-	{
-		// runtime instances have references to other entities
-		return true;
 	}
 
 	@Override
@@ -53,7 +46,7 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	@Override
 	public NicePlace create(
 		final Binary bytes,
-		final PersistenceObjectIdResolver idResolver
+		final PersistenceLoadHandler loadHandler
 	)
 	{
 		//required instances may not be available, yet, at creation time. Thus create dummy and fill in #update.
@@ -61,15 +54,15 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	}
 	
 	@Override
-	public void update(
+	public void updateState(
 		final Binary bytes,
 		final NicePlace instance,
-		final PersistenceObjectIdResolver idResolver
+		final PersistenceLoadHandler handler
 	)
 	{
 		//get the data of the legacy NicePlace fields
-		final String name = (String)idResolver.lookupObject(bytes.read_long(BINARY_OFFSET_name));
-		final String directions  = (String)idResolver.lookupObject(bytes.read_long(BINARY_OFFSET_directions));
+		final String name = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_name));
+		final String directions  = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_directions));
 			
 		//initialize the new version of our NicePlace
 		instance.name = name;
@@ -79,7 +72,7 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	@Override
 	public void iterateLoadableReferences(
 		final Binary bytes,
-		final PersistenceObjectIdAcceptor iterator
+		final PersistenceReferenceLoader iterator
 	)
 	{
 		iterator.acceptObjectId(bytes.read_long(BINARY_OFFSET_name));
