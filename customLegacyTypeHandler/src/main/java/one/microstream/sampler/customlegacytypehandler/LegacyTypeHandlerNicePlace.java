@@ -3,8 +3,8 @@ package one.microstream.sampler.customlegacytypehandler;
 import one.microstream.X;
 import one.microstream.persistence.binary.types.Binary;
 import one.microstream.persistence.binary.types.BinaryLegacyTypeHandler;
-import one.microstream.persistence.types.PersistenceLoadHandler;
-import one.microstream.persistence.types.PersistenceReferenceLoader;
+import one.microstream.persistence.types.PersistenceObjectIdAcceptor;
+import one.microstream.persistence.types.PersistenceObjectIdResolver;
 
 public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.AbstractCustom<NicePlace>
 {
@@ -49,23 +49,27 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 		return false;
 	}
 				
+	
 	@Override
-	public NicePlace create(final Binary bytes, final PersistenceLoadHandler handler)
+	public NicePlace create(
+		final Binary bytes,
+		final PersistenceObjectIdResolver idResolver
+	)
 	{
 		//required instances may not be available, yet, at creation time. Thus create dummy and fill in #update.
 		return new NicePlace();
 	}
 	
 	@Override
-	public void updateState(
+	public void update(
 		final Binary bytes,
 		final NicePlace instance,
-		final PersistenceLoadHandler handler
+		final PersistenceObjectIdResolver idResolver
 	)
 	{
 		//get the data of the legacy NicePlace fields
-		final String name = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_name));
-		final String directions  = (String)handler.lookupObject(bytes.read_long(BINARY_OFFSET_directions));
+		final String name = (String)idResolver.lookupObject(bytes.read_long(BINARY_OFFSET_name));
+		final String directions  = (String)idResolver.lookupObject(bytes.read_long(BINARY_OFFSET_directions));
 			
 		//initialize the new version of our NicePlace
 		instance.name = name;
@@ -73,12 +77,12 @@ public class LegacyTypeHandlerNicePlace extends BinaryLegacyTypeHandler.Abstract
 	}
 		
 	@Override
-	public final void iterateLoadableReferences(
-		final Binary offset,
-		final PersistenceReferenceLoader iterator
+	public void iterateLoadableReferences(
+		final Binary bytes,
+		final PersistenceObjectIdAcceptor iterator
 	)
 	{
-		iterator.acceptObjectId(offset.read_long(BINARY_OFFSET_name));
-		iterator.acceptObjectId(offset.read_long(BINARY_OFFSET_directions));
+		iterator.acceptObjectId(bytes.read_long(BINARY_OFFSET_name));
+		iterator.acceptObjectId(bytes.read_long(BINARY_OFFSET_directions));
 	}
 }

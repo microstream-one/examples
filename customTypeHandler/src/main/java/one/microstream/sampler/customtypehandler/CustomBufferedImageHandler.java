@@ -11,7 +11,7 @@ import javax.imageio.stream.MemoryCacheImageOutputStream;
 
 import one.microstream.persistence.binary.internal.AbstractBinaryHandlerCustomValue;
 import one.microstream.persistence.binary.types.Binary;
-import one.microstream.persistence.types.PersistenceLoadHandler;
+import one.microstream.persistence.types.PersistenceObjectIdResolver;
 import one.microstream.persistence.types.PersistenceStoreHandler;
 
 public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue<BufferedImage>
@@ -62,7 +62,7 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 	@Override
 	public BufferedImage create(
 		final Binary bytes,
-		final PersistenceLoadHandler handler
+		final PersistenceObjectIdResolver idResolver
 	)
 	{
 		final byte[] blob = bytes.build_bytes();
@@ -79,15 +79,6 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		}
 
 		return image;
-	}
-
-	@Override
-	public void validateState(
-		final Binary data,
-		final BufferedImage instance,
-		final PersistenceLoadHandler handler
-	)
-	{
 	}
 
 }
