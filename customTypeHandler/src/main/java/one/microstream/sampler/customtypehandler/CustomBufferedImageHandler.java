@@ -16,21 +16,34 @@ import one.microstream.persistence.types.PersistenceStoreHandler;
 
 public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue<BufferedImage, byte[]>
 {	
+	private static byte[] instanceState(final BufferedImage instance)
+	{
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try ( ImageOutputStream ios = new MemoryCacheImageOutputStream(bos))
+		{
+			ImageIO.write(instance, "png", ios);
+		}
+		catch (final IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+		return bos.toByteArray();
+	}
+	
+	private static byte[] binaryState(final Binary data)
+	{
+		return data.build_bytes();
+	}
+	
+	
 	public CustomBufferedImageHandler()
 	{
 		super(
 			BufferedImage.class,
 			CustomFields(
-				CustomField(long.class, "capacity"),
-				bytes("value")
+				bytes("imageData")
 			)
 		);
-	}
-
-	@Override
-	public boolean hasVaryingPersistedLengthInstances()
-	{
-		return false;
 	}
 
 	@Override
@@ -54,11 +67,11 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		final PersistenceLoadHandler handler
 	)
 	{
-		final byte[] blob = binaryState(data);
+		final byte[] imageData = binaryState(data);
 		
 		BufferedImage image = null;
 			
-		try(ByteArrayInputStream bis = new ByteArrayInputStream(blob))
+		try(ByteArrayInputStream bis = new ByteArrayInputStream(imageData))
 		{
 			image = ImageIO.read(bis);
 		}
@@ -81,24 +94,11 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 	{
 		return binaryState(data);
 	}
-	
-	private static byte[] instanceState(final BufferedImage instance)
+
+	@Override
+	public boolean hasVaryingPersistedLengthInstances()
 	{
-		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try ( ImageOutputStream ios = new MemoryCacheImageOutputStream(bos))
-		{
-			ImageIO.write(instance, "png", ios);
-		}
-		catch (final IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-		return bos.toByteArray();
-	}
-	
-	private static byte[] binaryState(final Binary data)
-	{
-		return data.build_bytes();
+		return true;
 	}
 
 }
