@@ -51,7 +51,7 @@ public class CustomBufferedImageHandler extends AbstractBinaryHandlerCustomValue
 		final Binary bytes,
 		final BufferedImage instance,
 		final long objectId,
-		final PersistenceStoreHandler handler
+		final PersistenceStoreHandler<Binary> handler
 	)
 	{				
 		bytes.store_bytes(
