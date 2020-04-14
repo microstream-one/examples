@@ -57,7 +57,10 @@ public class Main
 		}
 		else
 		{
-			command = new Scanner(System.in).nextLine();
+			try(Scanner scanner = new Scanner(System.in))
+			{
+				command = scanner.nextLine();
+			}
 		}
 
 		if(command.startsWith("a "))
