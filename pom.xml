@@ -21,7 +21,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<microstream.version>03.00.00-MS-RC1</microstream.version>
+		<microstream.version>03.00.00-MS-RC2</microstream.version>
 	</properties>
 
 	<build>
