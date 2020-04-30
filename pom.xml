@@ -90,6 +90,7 @@
 		<module>lazyLoading</module>
    		<module>storing</module>
    		<module>loading</module>
+		<module>layeredEntities</module>
    		<module>deleting</module>
    		<module>customTypeHandler</module>
 		<module>customLegacyTypeHandler</module>		
