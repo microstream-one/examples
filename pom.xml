@@ -22,7 +22,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<microstream.version>04.00.00-MS-GA</microstream.version>
-	</properties>
+	</properties> 
 
 	<build>
 		<plugins>
