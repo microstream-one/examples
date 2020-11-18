@@ -1,152 +1,155 @@
 
 package one.microstream.sampler.items;
 
-import java.io.Console;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
+import org.jline.builtins.Builtins;
+import org.jline.builtins.Completers.SystemCompleter;
+import org.jline.builtins.Widgets.CmdDesc;
+import org.jline.builtins.Widgets.CmdLine;
+import org.jline.builtins.Widgets.TailTipWidgets;
+import org.jline.builtins.Widgets.TailTipWidgets.TipType;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.MaskingCallback;
+import org.jline.reader.ParsedLine;
+import org.jline.reader.Parser;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+
+import one.microstream.exceptions.IORuntimeException;
 import one.microstream.storage.types.EmbeddedStorage;
 import one.microstream.storage.types.EmbeddedStorageManager;
+import picocli.CommandLine;
+import picocli.shell.jline3.PicocliCommands;
 
 
 public class Main
 {
 	public static void main(final String[] args)
 	{
-		new Main().start();
+		new Main().startCli();
 	}
 
 	private final EmbeddedStorageManager storageManager;
 
-	public Main()
+	private Main()
 	{
-		this.storageManager = EmbeddedStorage.start(new DataRoot(), Paths.get("data"));
+		this.storageManager = EmbeddedStorage.start(
+			new DataRoot(),
+			Paths.get("data")
+		);
 	}
 
-	private void start()
+	/**
+	 * Starts the command line interface, for commands see {@link Commands}
+	 */
+	private void startCli()
 	{
-		this.usage();
-		this.command();
-	}
-
-	private DataRoot root()
-	{
-		return (DataRoot)this.storageManager.root();
-	}
-
-	private void usage()
-	{
-		System.out.println("Usage:");
-		System.out.println("a <title> - adds an item");
-		System.out.println("r <index> - removes an item");
-		System.out.println("s <term> - searches for items");
-		System.out.println("l - list all items");
-		System.out.println("q - quit");
-	}
-
-	private void command()
-	{
-		final String  command;
-
-		final Console console = System.console();
-		if(console != null)
+		final Path            workDir         = Paths.get("");
+		final Builtins        builtins        = new Builtins(workDir, null, null);
+		builtins.rename(Builtins.Command.TTOP, "top");
+        builtins.alias("zle", "widget");
+        builtins.alias("bindkey", "keymap");
+		final SystemCompleter systemCompleter = builtins.compileCompleters();
+		final CommandLine     cli             = Commands.createCommandLine(this.storageManager);
+		final PicocliCommands picocliCommands = new PicocliCommands(workDir, cli);
+		systemCompleter.add(picocliCommands.compileCompleters());
+		systemCompleter.compile();
+		Terminal terminal;
+        try
 		{
-			command = console.readLine().trim();
+			terminal = TerminalBuilder.builder().build();
 		}
-		else
+		catch(final IOException e)
 		{
-			try(Scanner scanner = new Scanner(System.in))
-			{
-				command = scanner.nextLine();
-			}
+			throw new IORuntimeException(e);
 		}
+        final LineReader reader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(systemCompleter)
+                .parser(new DefaultParser())
+                .variable(LineReader.LIST_MAX, 50)
+                .build();
+        builtins.setLineReader(reader);
+        final DescriptionGenerator descriptionGenerator = new DescriptionGenerator(builtins, picocliCommands);
+        new TailTipWidgets(reader, descriptionGenerator::commandDescription, 5, TipType.COMPLETER);
 
-		if(command.startsWith("a "))
-		{
-			final String title = command.substring(2).trim();
-			if(title.isEmpty())
-			{
-				this.usage();
-			}
-			else
-			{
-				final List<Item> items = this.root().items();
-				items.add(new Item(title));
-				this.storageManager.store(items);
-				System.out.println("Item added");
-			}
-			this.command();
-		}
-		else if(command.startsWith("r "))
-		{
-			try
-			{
-				final int        index = Integer.parseInt(command.substring(2).trim());
-				final List<Item> items = this.root().items();
-				if(index < 0 || index >= items.size())
+        cli.usage(System.out);
+
+		final String prompt      = "Items> ";
+		final String rightPrompt = null;
+
+        while(true)
+        {
+        	final String line = reader.readLine(prompt, rightPrompt, (MaskingCallback) null, null);
+            if(line.matches("^\\s*#.*"))
+            {
+                continue;
+            }
+			final ParsedLine pl        = reader.getParser().parse(line, 0);
+			final String[]   arguments = pl.words().toArray(new String[0]);
+			final String     command   = Parser.getCommand(pl.word());
+            if(builtins.hasCommand(command))
+            {
+                try
 				{
-					System.out.println("Invalid index");
+					builtins.execute(
+						command,
+						Arrays.copyOfRange(arguments, 1, arguments.length),
+						System.in,
+						System.out,
+						System.err
+					);
 				}
-				else
+				catch(final Exception e)
 				{
-					items.remove(index);
-					this.storageManager.store(items);
-					System.out.println("Item removed");
+					throw new RuntimeException(e);
 				}
-			}
-			catch(final NumberFormatException e)
-			{
-				this.usage();
-			}
-			this.command();
-		}
-		else if(command.startsWith("s "))
-		{
-			final String term = command.substring(2).trim().toLowerCase();
-			if(term.isEmpty())
-			{
-				this.usage();
-			}
-			else
-			{
-				final List<Item> items = this.root().items().stream()
-					.filter(item -> item.getTitle().toLowerCase().startsWith(term))
-					.collect(Collectors.toList());
-				this.print(items);
-			}
-			this.command();
-		}
-		else if(command.equals("l"))
-		{
-			this.print(this.root().items());
-			this.command();
-		}
-		else if(command.equals("q"))
-		{
-			this.storageManager.shutdown();
-		}
-		else
-		{
-			this.usage();
-			this.command();
-		}
+            }
+            else
+            {
+                cli.execute(arguments);
+            }
+        }
 	}
 
-	private void print(final List<Item> items)
+
+	private static class DescriptionGenerator
 	{
-		if(items.isEmpty())
+		Builtins        builtins;
+		PicocliCommands picocli;
+
+		public DescriptionGenerator(final Builtins builtins, final PicocliCommands picocli)
 		{
-			System.out.println("No items found");
+			this.builtins = builtins;
+			this.picocli  = picocli;
 		}
-		else
+
+		CmdDesc commandDescription(final CmdLine line)
 		{
-			System.out.println("Found " + items.size() + " item(s):");
-			for(int i = 0, c = items.size(); i < c; i++)
+			switch(line.getDescriptionType())
 			{
-				System.out.println(i + " " + items.get(i));
+				case COMMAND:
+					final String cmd = Parser.getCommand(line.getArgs().get(0));
+					if(this.builtins.hasCommand(cmd))
+					{
+						return this.builtins.commandDescription(cmd);
+					}
+					if(this.picocli.hasCommand(cmd))
+					{
+						return this.picocli.commandDescription(cmd);
+					}
+					break;
+				default:
+					break;
 			}
+			return null;
 		}
 	}
+	
 }

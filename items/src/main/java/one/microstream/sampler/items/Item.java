@@ -6,13 +6,15 @@ import java.time.LocalDateTime;
 
 public class Item
 {
-	private String              title;
+	private final String        title;
 	private final LocalDateTime createdAt;
 	
-	public Item(final String title)
+	public Item(
+		final String title
+	)
 	{
 		super();
-
+		
 		this.title     = title;
 		this.createdAt = LocalDateTime.now();
 	}
@@ -20,11 +22,6 @@ public class Item
 	public String getTitle()
 	{
 		return this.title;
-	}
-	
-	public void setTitle(final String title)
-	{
-		this.title = title;
 	}
 	
 	public LocalDateTime getCreatedAt()
