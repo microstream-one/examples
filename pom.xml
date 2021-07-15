@@ -91,6 +91,7 @@
 	</dependencyManagement>
 
 	<modules>
+		<module>blobs</module>
 		<module>helloworld</module>
 		<module>helloworld-ini</module>
 		<module>filesystems</module>
