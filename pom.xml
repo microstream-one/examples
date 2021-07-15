@@ -97,6 +97,7 @@
 		<module>items</module>
 		<module>lazyLoading</module>
 		<module>storing</module>
+		<module>eagerStoring</module>
 		<module>loading</module>
 		<module>layeredEntities</module>
 		<module>deleting</module>
