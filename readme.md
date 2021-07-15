@@ -1,7 +1,8 @@
 
-# Microstream Examples
-Collection of examples how to work with MicroStream.
+# Microstream Examples 2.2
 
-This is work in progress. From time to time more samples are going to be added :) Stay tuned!
+Collection of examples how to work with MicroStream for version 2.2.
 
-<http://www.microstream.one>
+# MicroStream Examples (Version >= 5)
+
+The examples have moved, and are now part of the [main repository](https://github.com/microstream-one/microstream/tree/master/examples).
