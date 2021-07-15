@@ -1,7 +1,7 @@
 
-# Microstream Examples (Version < 5)
+# Microstream Examples 4.1
 
-Collection of examples how to work with MicroStream for version < 5.
+Collection of examples how to work with MicroStream for version 4.1.
 
 # MicroStream Examples (Version >= 5)
 
